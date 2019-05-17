@@ -25,6 +25,8 @@ app.get('/classes/:id', db.getClassesById)
 app.post('/classes', db.createClass)
 app.put('/classes/:id', db.updateClass)
 app.delete('/classes/:id', db.deleteClass)
+app.get('/levels', db.getAllLevels)
+app.get('/levels/:name', db.getLevelOrder)
 
 app.listen(port, () => {
 	console.log('App running on port ${port}.')

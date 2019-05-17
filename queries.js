@@ -135,6 +135,29 @@ const deleteClass = (request, response) => {
 	})
 }
 
+const getAllLevels = (request, response) => {
+	
+	pool.query('SELECT * FROM levels', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const getLevelOrder = (request, response) => {
+	const query = request.params.name
+	
+	pool.query('SELECT * FROM levels WHERE name = $1', [query], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
 module.exports = {
 	getTeachers,
 	getTeacherByParameter,
@@ -146,4 +169,6 @@ module.exports = {
 	createClass,
 	updateClass,
 	deleteClass,
+	getAllLevels,
+	getLevelOrder,
 }

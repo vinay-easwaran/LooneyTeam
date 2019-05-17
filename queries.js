@@ -17,11 +17,11 @@ const getTeachers = (request, response) => {
 	})
 }
 
-const getTeacherByUsername = (request, response) => {
-	//const id = parseInt(request.params.id)
-	const username = request.params.username
+const getTeacherByParameter = (request, response) => {
+	const query = request.params.query
+	const bool = (request.params.query == "true")
 
-  pool.query('SELECT * FROM teachers WHERE username = $1', [username], (error, results) => {
+  pool.query('SELECT * FROM teachers WHERE username = $1 OR first_name = $1 OR last_name = $1 OR email = $1 OR verified = $2', [query, bool], (error, results) => {
     if (error) {
       throw error
     }
@@ -41,12 +41,13 @@ const createTeacher = (request, response) => {
 }
 
 const updateTeacher = (request, response) => {
-	const teacher_username = request.params.username
+	const query = request.params.query
+	const bool = (request.params.query == "true")
 	const { username, first_name, last_name, password, email, verified } = request.body
 	
 	pool.query(
-		'UPDATE teachers SET username = $1, first_name = $2, last_name = $3, password = $4, email = $5, verified = $6 WHERE username = $7',
-		[username, first_name, last_name, password, email, verified, teacher_username],
+		'UPDATE teachers SET username = $1, first_name = $2, last_name = $3, password = $4, email = $5, verified = $6 WHERE username = $7 OR first_name = $7 OR last_name = $7 OR email = $7 OR verified = $8',
+		[username, first_name, last_name, password, email, verified, query, bool],
 		(error, results) => {
 			if (error)
 			{
@@ -58,9 +59,10 @@ const updateTeacher = (request, response) => {
 }
 
 const deleteTeacher = (request, response) => {
-	const username = request.params.username
+	const query = request.params.query
+	const bool = (request.params.query == "true")
 	
-	pool.query('DELETE FROM teachers WHERE username = $1', [username], (error, results) => {
+	pool.query('DELETE FROM teachers WHERE username = $1 OR first_name = $1 OR last_name = $1 OR email = $1 OR verified = $2', [query, bool], (error, results) => {
 		if (error)
 		{
 			throw error
@@ -135,7 +137,7 @@ const deleteClass = (request, response) => {
 
 module.exports = {
 	getTeachers,
-	getTeacherByUsername,
+	getTeacherByParameter,
 	createTeacher,
 	updateTeacher,
 	deleteTeacher,

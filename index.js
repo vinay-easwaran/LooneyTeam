@@ -16,7 +16,7 @@ app.get('/', (request, response) => {
 })
 
 app.get('/teachers',db.getTeachers)
-app.get('/teachers/:username',db.getTeacherByUsername)
+app.get('/teachers/:query',db.getTeacherByParameter)
 app.post('/teachers', db.createTeacher)
 app.put('/teachers/:username', db.updateTeacher)
 app.delete('/teachers/:username', db.deleteTeacher)

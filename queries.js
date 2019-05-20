@@ -158,6 +158,59 @@ const getLevelOrder = (request, response) => {
 	})
 }
 
+const getAllClassTemplates = (request, response) => {
+	
+	pool.query('SELECT * FROM class_template', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const getClassTemplate = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('SELECT * FROM class_template WHERE class_title = $1 OR class_category = $1 OR class_template_id = $2 OR skills = $1', [query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const createClassTemplate = (request, response) => {
+	const { class_title, class_description, class_category } = request.body
+	
+	pool.query('INSERT INTO class_template (class_title, class_description, class_category) VALUES ($1, $2, $3)', [class_title, class_description, class_category], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Class Template added with ID: ${result.insertId}')
+	})
+}
+
+const updateClassTemplate = (request, response) => {
+	const query = request.params.query
+	const { class_title, class_description, class_category } = request.body
+	const id = parseInt(request.params.query)
+	
+	pool.query(
+		'UPDATE class_template SET class_title = $1, class_description = $2, class_category = $3 WHERE class_title = $4 OR class_category = $4 OR class_template_id = $5 OR skills = $4',
+		[class_title,class_description, class_category, query, id],
+		(error, results) => {
+			if (error)
+			{
+				throw error
+			}
+			response.status(200).send('Teacher modified with ID: ${id}')
+		}
+		)
+}
+
 module.exports = {
 	getTeachers,
 	getTeacherByParameter,
@@ -171,4 +224,8 @@ module.exports = {
 	deleteClass,
 	getAllLevels,
 	getLevelOrder,
+	getAllClassTemplates,
+	getClassTemplate,
+	createClassTemplate,
+	updateClassTemplate,
 }

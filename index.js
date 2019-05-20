@@ -16,7 +16,7 @@ app.get('/', (request, response) => {
 })
 
 app.get('/teachers',db.getTeachers)
-app.get('/teachers/:username',db.getTeacherByUsername)
+app.get('/teachers/:query',db.getTeacherByParameter)
 app.post('/teachers', db.createTeacher)
 app.put('/teachers/:username', db.updateTeacher)
 app.delete('/teachers/:username', db.deleteTeacher)
@@ -25,6 +25,11 @@ app.get('/classes/:id', db.getClassesById)
 app.post('/classes', db.createClass)
 app.put('/classes/:id', db.updateClass)
 app.delete('/classes/:id', db.deleteClass)
+app.get('/levels', db.getAllLevels)
+app.get('/levels/:name', db.getLevelOrder)
+app.get('/class_template', db.getAllClassTemplates)
+app.get('/class_template/:query', db.getClassTemplate)
+app.post('/class_template', db.createClassTemplate)
 
 app.listen(port, () => {
 	console.log('App running on port ${port}.')

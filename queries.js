@@ -37,7 +37,6 @@ const createTeacher = (request, response) => {
 			throw error
 		}
 		response.status(201).send('Teacher added with ID: ${result.insertId}')
-		response.status(201).send('changed')
 	})
 }
 

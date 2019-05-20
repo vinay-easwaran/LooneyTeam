@@ -170,10 +170,11 @@ const getAllClassTemplates = (request, response) => {
 }
 
 const getClassTemplate = (request, response) => {
+	// have to add skills to the query search - removed because its emptiness raises an error
 	const query = request.params.query
 	const id = parseInt(request.params.query)
 	
-	pool.query('SELECT * FROM class_template WHERE class_title = $1 OR class_category = $1 OR class_template_id = $2 OR skills = $1', [query, id], (error, results) => {
+	pool.query('SELECT * FROM class_template WHERE class_title = $1 OR class_category = $1 OR class_template_id = $2', [query, id], (error, results) => {
 		if (error)
 		{
 			throw error
@@ -194,13 +195,14 @@ const createClassTemplate = (request, response) => {
 }
 
 const updateClassTemplate = (request, response) => {
+	// have to add skills to the query search - removed because its emptiness raises an error
 	const query = request.params.query
 	const { class_title, class_description, class_category } = request.body
 	const id = parseInt(request.params.query)
 	
 	pool.query(
-		'UPDATE class_template SET class_title = $1, class_description = $2, class_category = $3 WHERE class_title = $4 OR class_category = $4 OR class_template_id = $5 OR skills = $4',
-		[class_title,class_description, class_category, query, id],
+		'UPDATE class_template SET class_title = $1, class_description = $2, class_category = $3 WHERE class_title = $4 OR class_category = $4 OR class_template_id = $5',
+		[class_title, class_description, class_category, query, id],
 		(error, results) => {
 			if (error)
 			{
@@ -209,6 +211,19 @@ const updateClassTemplate = (request, response) => {
 			response.status(200).send('Teacher modified with ID: ${id}')
 		}
 		)
+}
+
+const deleteClassTemplate = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('DELETE FROM class_template WHERE class_title = $1 OR class_description = $1 OR class_category = $1 OR class_template_id = $2', [query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).send('Teacher deleted with ID: ${id}')
+	})
 }
 
 module.exports = {
@@ -228,4 +243,5 @@ module.exports = {
 	getClassTemplate,
 	createClassTemplate,
 	updateClassTemplate,
+	deleteClassTemplate,
 }

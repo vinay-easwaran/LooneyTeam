@@ -32,6 +32,11 @@ app.get('/class_template/:query', db.getClassTemplate)
 app.post('/class_template', db.createClassTemplate)
 app.put('/class_template/:query', db.updateClassTemplate)
 app.delete('/class_template/:query', db.deleteClassTemplate)
+app.get('/teacher_unavailability', db.getAllUnavailability)
+app.get('/teacher_unavailability/:query', db.getUnavailability)
+app.post('/teacher_unavailability', db.createUnavailability)
+app.put('/teacher_unavailability/:query', db.updateUnavailability)
+app.delete('/teacher_unavailability/:query', db.deleteUnavailability)
 
 app.listen(port, () => {
 	console.log('App running on port ${port}.')

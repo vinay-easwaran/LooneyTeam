@@ -226,6 +226,74 @@ const deleteClassTemplate = (request, response) => {
 	})
 }
 
+const getAllUnavailability = (request, response) => {
+	
+	pool.query('SELECT * FROM teacher_unavailability', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const getUnavailability = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('SELECT * FROM teacher_unavailability WHERE monday = $1 OR tuesday = $1 OR wednesday = $1 OR thursday = $1 OR friday = $1 OR teacher_id = $2', [query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const createUnavailability = (request, response) => {
+	const { monday, tuesday, wednesday, thursday, friday } = request.body
+	
+	pool.query('INSERT INTO teacher_unavailability (monday, tueaday, wednesday, thursday, friday) VALUES ($1, $2, $3, $4, $5)', [monday, tuesday, wednesday, thursday, friday], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Teacher Unavailability added with ID: ${result.insertId}')
+	})
+}
+
+const updateUnavailability = (request, response) => {
+	const query = request.params.query
+	const { monday, tuesday, wednesday, thursday, friday } = request.body
+	const id = parseInt(request.params.query)
+	
+	pool.query(
+		'UPDATE teacher_unavailability SET monday = $1, tuesday = $2, wednesday = $3, thursday = $4, friday = $5 WHERE monday = $6 OR tuesday = $6 OR wednesday = $6 OR thursday = $6 OR friday = $6 OR teacher_id = $7',
+		[monday, tuesday, wednesday, thursday, friday, query, id],
+		(error, results) => {
+			if (error)
+			{
+				throw error
+			}
+			response.status(200).send('Unavailability modified with ID: ${id}')
+		}
+		)
+}
+
+const deleteUnavailability = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('DELETE FROM teacher_unavailability WHERE monday = $1 OR tuesday = $1 OR wednesday = $1 OR thursday = $1 OR friday = $1 OR teacher_id = $2', 
+	[query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).send('Teacher deleted with ID: ${id}')
+	})
+}
+
+
 module.exports = {
 	getTeachers,
 	getTeacherByParameter,
@@ -244,4 +312,9 @@ module.exports = {
 	createClassTemplate,
 	updateClassTemplate,
 	deleteClassTemplate,
+	getAllUnavailability,
+	getUnavailability,
+	createUnavailability,
+	updateUnavailability,
+	deleteUnavailability,
 }

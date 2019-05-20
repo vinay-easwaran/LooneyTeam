@@ -19,9 +19,9 @@ const getTeachers = (request, response) => {
 
 const getTeacherByParameter = (request, response) => {
 	const query = request.params.query
-	const bool = (request.params.query == "true")
+	const bool = (request.params.query == "true" || "false")
 
-  pool.query('SELECT * FROM teachers WHERE username = $1 OR first_name = $1 OR last_name = $1 OR email = $1 OR verified = $2', [query, bool], (error, results) => {
+  pool.query('SELECT * FROM teachers WHERE username = $1 OR first_name = $1 OR last_name = $1 OR email = $1 OR verified = $2 OR address = $1', [query, bool], (error, results) => {
     if (error) {
       throw error
     }
@@ -30,9 +30,9 @@ const getTeacherByParameter = (request, response) => {
 }
 
 const createTeacher = (request, response) => {
-	const { username, first_name, last_name, password, email, verified } = request.body
+	const { username, first_name, last_name, password, email, verified, teacher_id, skills, address} = request.body
 	
-	pool.query('INSERT INTO teachers (username, first_name, last_name, password, email, verified) VALUES ($1, $2, $3, $4, $5, $6)', [username, first_name, last_name, password, email, verified], (error, results) => {
+	pool.query('INSERT INTO teachers (username, first_name, last_name, password, email, verified, teacher_id, skills, address) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', [username, first_name, last_name, password, email, verified, teacher_id, skills, address], (error, results) => {
 		if (error) {
 			throw error
 		}
@@ -211,6 +211,53 @@ const updateClassTemplate = (request, response) => {
 		)
 }
 
+const createProgramCategory = (request, response) => {
+	const { program_category_id, program_category_name } = request.body
+	
+	pool.query('INSERT INTO program_category (program_category_id, program_category_name) VALUES ($1, $2)', [program_category_id, program_category_name], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Program Category added with ID: ${result.insertId}')
+	})
+}
+
+const getProgramCategory = (request, response) => {
+	
+	pool.query('SELECT * FROM program_category ', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const getProgramCategorybyParameter = (request, response) => {
+	const query = request.params.query
+	var id = -1
+	if('123456789'.includes(request.params.query[0])){
+		id = parseInt(request.params.query)}
+	pool.query('SELECT * FROM program_category WHERE program_category_name = $1 OR program_category_id = $2', [query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const approveTeacher = (request, response) => {
+	const { class_template_id, teacher_id, teacher_level_id } = request.body
+	
+	pool.query('INSERT INTO teacher_approval (class_template_id, teacher_id, teacher_level_id) VALUES ($1, $2, $3)', [class_template_id, teacher_id, teacher_level_id], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Teacher approved with ID: ${result.insertId}')
+	})
+}
+
 module.exports = {
 	getTeachers,
 	getTeacherByParameter,
@@ -228,4 +275,8 @@ module.exports = {
 	getClassTemplate,
 	createClassTemplate,
 	updateClassTemplate,
+	createProgramCategory,
+	getProgramCategory,
+	getProgramCategorybyParameter,
+	approveTeacher,
 }

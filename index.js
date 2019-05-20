@@ -30,6 +30,10 @@ app.get('/levels/:name', db.getLevelOrder)
 app.get('/class_template', db.getAllClassTemplates)
 app.get('/class_template/:query', db.getClassTemplate)
 app.post('/class_template', db.createClassTemplate)
+app.post('/program_category',db.createProgramCategory)
+app.get('/program_category',db.getProgramCategory)
+app.get('/program_category/:query', db.getProgramCategorybyParameter)
+app.post('/teacher_approval', db.approveTeacher)
 
 app.listen(port, () => {
 	console.log('App running on port ${port}.')

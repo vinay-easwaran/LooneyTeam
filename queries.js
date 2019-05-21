@@ -19,7 +19,7 @@ const getTeachers = (request, response) => {
 
 const getTeacherByParameter = (request, response) => {
 	const query = request.params.query
-	const bool = (request.params.query == "true" || "false")
+	const bool = (request.params.query == "true")
 
   pool.query('SELECT * FROM teachers WHERE username = $1 OR first_name = $1 OR last_name = $1 OR email = $1 OR verified = $2 OR address = $1', [query, bool], (error, results) => {
     if (error) {
@@ -258,6 +258,46 @@ const approveTeacher = (request, response) => {
 	})
 }
 
+const createProgramTemplate = (request, response) => {
+	const { program_template_id, program_title, program_description, program_category_id, skills } = request.body
+	console.log(request.body)
+	
+	pool.query('INSERT INTO program_template (program_template_id, program_title, program_description, program_category_id, skills) VALUES ($1, $2, $3, $4, $5)', [program_template_id, program_title, program_description, program_category_id, skills], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Program Template added with ID: ${result.insertId}')
+	})
+}
+
+const getProgramTemplate = (request, response) => {
+	
+	pool.query('SELECT * FROM program_template ORDER BY program_template_id', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const updateProgramTemplate = (request, response) => {
+	const { program_title, program_description } = request.body
+	const id = parseInt(request.params.program_template_id)
+	
+	pool.query(
+		'UPDATE program_template SET program_title = $2, program_description = $3 WHERE program_template_id = $1',
+		[id, program_title, program_description],
+		(error, results) => {
+			if (error)
+			{
+				throw error
+			}
+			response.status(200).send('Program Template modified with ID: ${id}')
+		}
+		)
+}
+
 module.exports = {
 	getTeachers,
 	getTeacherByParameter,
@@ -279,4 +319,7 @@ module.exports = {
 	getProgramCategory,
 	getProgramCategorybyParameter,
 	approveTeacher,
+	createProgramTemplate,
+	getProgramTemplate,
+	updateProgramTemplate,
 }

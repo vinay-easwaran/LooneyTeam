@@ -34,6 +34,9 @@ app.post('/program_category',db.createProgramCategory)
 app.get('/program_category',db.getProgramCategory)
 app.get('/program_category/:query', db.getProgramCategorybyParameter)
 app.post('/teacher_approval', db.approveTeacher)
+app.post('/program_template', db.createProgramTemplate)
+app.get('/program_template', db.getProgramTemplate)
+app.put('/program_template/:program_template_id', db.updateProgramTemplate)
 
 app.listen(port, () => {
 	console.log('App running on port ${port}.')

@@ -170,10 +170,11 @@ const getAllClassTemplates = (request, response) => {
 }
 
 const getClassTemplate = (request, response) => {
+	// have to add skills to the query search - removed because its emptiness raises an error
 	const query = request.params.query
 	const id = parseInt(request.params.query)
 	
-	pool.query('SELECT * FROM class_template WHERE class_title = $1 OR class_category = $1 OR class_template_id = $2 OR skills = $1', [query, id], (error, results) => {
+	pool.query('SELECT * FROM class_template WHERE class_title = $1 OR class_category = $1 OR class_template_id = $2', [query, id], (error, results) => {
 		if (error)
 		{
 			throw error
@@ -194,13 +195,14 @@ const createClassTemplate = (request, response) => {
 }
 
 const updateClassTemplate = (request, response) => {
+	// have to add skills to the query search - removed because its emptiness raises an error
 	const query = request.params.query
 	const { class_title, class_description, class_category } = request.body
 	const id = parseInt(request.params.query)
 	
 	pool.query(
-		'UPDATE class_template SET class_title = $1, class_description = $2, class_category = $3 WHERE class_title = $4 OR class_category = $4 OR class_template_id = $5 OR skills = $4',
-		[class_title,class_description, class_category, query, id],
+		'UPDATE class_template SET class_title = $1, class_description = $2, class_category = $3 WHERE class_title = $4 OR class_category = $4 OR class_template_id = $5',
+		[class_title, class_description, class_category, query, id],
 		(error, results) => {
 			if (error)
 			{
@@ -232,6 +234,29 @@ const getProgramCategory = (request, response) => {
 		response.status(200).json(results.rows)
 	})
 }
+const deleteClassTemplate = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('DELETE FROM class_template WHERE class_title = $1 OR class_description = $1 OR class_category = $1 OR class_template_id = $2', [query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).send('Teacher deleted with ID: ${id}')
+	})
+}
+
+const getAllUnavailability = (request, response) => {
+	
+	pool.query('SELECT * FROM teacher_unavailability', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
 
 const getProgramCategorybyParameter = (request, response) => {
 	const query = request.params.query
@@ -239,6 +264,18 @@ const getProgramCategorybyParameter = (request, response) => {
 	if('123456789'.includes(request.params.query[0])){
 		id = parseInt(request.params.query)}
 	pool.query('SELECT * FROM program_category WHERE program_category_name = $1 OR program_category_id = $2', [query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+const getUnavailability = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('SELECT * FROM teacher_unavailability WHERE monday = $1 OR tuesday = $1 OR wednesday = $1 OR thursday = $1 OR friday = $1 OR teacher_id = $2', [query, id], (error, results) => {
 		if (error)
 		{
 			throw error
@@ -280,6 +317,49 @@ const getProgramTemplate = (request, response) => {
 		response.status(200).json(results.rows)
 	})
 }
+const createUnavailability = (request, response) => {
+	const { monday, tuesday, wednesday, thursday, friday } = request.body
+	
+	pool.query('INSERT INTO teacher_unavailability (monday, tueaday, wednesday, thursday, friday) VALUES ($1, $2, $3, $4, $5)', [monday, tuesday, wednesday, thursday, friday], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Teacher Unavailability added with ID: ${result.insertId}')
+	})
+}
+
+const updateUnavailability = (request, response) => {
+	const query = request.params.query
+	const { monday, tuesday, wednesday, thursday, friday } = request.body
+	const id = parseInt(request.params.query)
+	
+	pool.query(
+		'UPDATE teacher_unavailability SET monday = $1, tuesday = $2, wednesday = $3, thursday = $4, friday = $5 WHERE monday = $6 OR tuesday = $6 OR wednesday = $6 OR thursday = $6 OR friday = $6 OR teacher_id = $7',
+		[monday, tuesday, wednesday, thursday, friday, query, id],
+		(error, results) => {
+			if (error)
+			{
+				throw error
+			}
+			response.status(200).send('Unavailability modified with ID: ${id}')
+		}
+		)
+}
+
+const deleteUnavailability = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('DELETE FROM teacher_unavailability WHERE monday = $1 OR tuesday = $1 OR wednesday = $1 OR thursday = $1 OR friday = $1 OR teacher_id = $2', 
+	[query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).send('Teacher deleted with ID: ${id}')
+	})
+}
+
 
 const updateProgramTemplate = (request, response) => {
 	const { program_title, program_description } = request.body
@@ -322,4 +402,10 @@ module.exports = {
 	createProgramTemplate,
 	getProgramTemplate,
 	updateProgramTemplate,
+	deleteClassTemplate,
+	getAllUnavailability,
+	getUnavailability,
+	createUnavailability,
+	updateUnavailability,
+	deleteUnavailability,
 }

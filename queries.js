@@ -30,9 +30,9 @@ const getTeacherByParameter = (request, response) => {
 }
 
 const createTeacher = (request, response) => {
-	const { username, first_name, last_name, password, email, verified, teacher_id, skills, address} = request.body
+	const { username, first_name, last_name, password, email, verified, address, skills} = request.body
 	
-	pool.query('INSERT INTO teachers (username, first_name, last_name, password, email, verified, skills, address) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [username, first_name, last_name, password, email, verified, skills, address], (error, results) => {
+	pool.query('INSERT INTO teachers (username, first_name, last_name, password, email, verified, address, skills) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [username, first_name, last_name, password, email, verified, address, skills], (error, results) => {
 		if (error) {
 			throw error
 		}

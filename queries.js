@@ -21,7 +21,7 @@ const getTeacherByParameter = (request, response) => {
 	const query = request.params.query
 	const bool = (request.params.query == "true")
 
-  pool.query('SELECT * FROM teachers WHERE username = $1 OR first_name = $1 OR last_name = $1 OR email = $1 OR verified = $2', [query, bool], (error, results) => {
+  pool.query('SELECT * FROM teachers WHERE username = $1 OR first_name = $1 OR last_name = $1 OR email = $1 OR verified = $2 OR address = $1', [query, bool], (error, results) => {
     if (error) {
       throw error
     }
@@ -30,7 +30,7 @@ const getTeacherByParameter = (request, response) => {
 }
 
 const createTeacher = (request, response) => {
-	const { username, first_name, last_name, password, email, verified, address, skills } = request.body
+	const { username, first_name, last_name, password, email, verified, address, skills} = request.body
 	
 	pool.query('INSERT INTO teachers (username, first_name, last_name, password, email, verified, address, skills) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [username, first_name, last_name, password, email, verified, address, skills], (error, results) => {
 		if (error) {
@@ -213,6 +213,27 @@ const updateClassTemplate = (request, response) => {
 		)
 }
 
+const createProgramCategory = (request, response) => {
+	const { program_category_id, program_category_name } = request.body
+	
+	pool.query('INSERT INTO program_category (program_category_id, program_category_name) VALUES ($1, $2)', [program_category_id, program_category_name], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Program Category added with ID: ${result.insertId}')
+	})
+}
+
+const getProgramCategory = (request, response) => {
+	
+	pool.query('SELECT * FROM program_category ', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
 const deleteClassTemplate = (request, response) => {
 	const query = request.params.query
 	const id = parseInt(request.params.query)
@@ -237,6 +258,19 @@ const getAllUnavailability = (request, response) => {
 	})
 }
 
+const getProgramCategorybyParameter = (request, response) => {
+	const query = request.params.query
+	var id = -1
+	if('123456789'.includes(request.params.query[0])){
+		id = parseInt(request.params.query)}
+	pool.query('SELECT * FROM program_category WHERE program_category_name = $1 OR program_category_id = $2', [query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
 const getUnavailability = (request, response) => {
 	const query = request.params.query
 	const id = parseInt(request.params.query)
@@ -250,6 +284,39 @@ const getUnavailability = (request, response) => {
 	})
 }
 
+const approveTeacher = (request, response) => {
+	const { class_template_id, teacher_id, teacher_level_id } = request.body
+	
+	pool.query('INSERT INTO teacher_approval (class_template_id, teacher_id, teacher_level_id) VALUES ($1, $2, $3)', [class_template_id, teacher_id, teacher_level_id], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Teacher approved with ID: ${result.insertId}')
+	})
+}
+
+const createProgramTemplate = (request, response) => {
+	const { program_template_id, program_title, program_description, program_category_id, skills } = request.body
+	console.log(request.body)
+	
+	pool.query('INSERT INTO program_template (program_template_id, program_title, program_description, program_category_id, skills) VALUES ($1, $2, $3, $4, $5)', [program_template_id, program_title, program_description, program_category_id, skills], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Program Template added with ID: ${result.insertId}')
+	})
+}
+
+const getProgramTemplate = (request, response) => {
+	
+	pool.query('SELECT * FROM program_template ORDER BY program_template_id', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
 const createUnavailability = (request, response) => {
 	const { monday, tuesday, wednesday, thursday, friday } = request.body
 	
@@ -294,6 +361,23 @@ const deleteUnavailability = (request, response) => {
 }
 
 
+const updateProgramTemplate = (request, response) => {
+	const { program_title, program_description } = request.body
+	const id = parseInt(request.params.program_template_id)
+	
+	pool.query(
+		'UPDATE program_template SET program_title = $2, program_description = $3 WHERE program_template_id = $1',
+		[id, program_title, program_description],
+		(error, results) => {
+			if (error)
+			{
+				throw error
+			}
+			response.status(200).send('Program Template modified with ID: ${id}')
+		}
+		)
+}
+
 module.exports = {
 	getTeachers,
 	getTeacherByParameter,
@@ -311,6 +395,13 @@ module.exports = {
 	getClassTemplate,
 	createClassTemplate,
 	updateClassTemplate,
+	createProgramCategory,
+	getProgramCategory,
+	getProgramCategorybyParameter,
+	approveTeacher,
+	createProgramTemplate,
+	getProgramTemplate,
+	updateProgramTemplate,
 	deleteClassTemplate,
 	getAllUnavailability,
 	getUnavailability,

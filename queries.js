@@ -378,6 +378,85 @@ const updateProgramTemplate = (request, response) => {
 		)
 }
 
+const createLiveProgram = (request, response) => {
+	const { region_id, program_template_id, main_location, primary_teacher, start_date, end_date } = request.body
+	
+	pool.query('INSERT INTO program_live (region_id, program_template_id, main_location, primary_teacher, start_date, end_date) VALUES ($1, $2, $3, $4, $5, $6)', [region_id, program_template_id, main_location, primary_teacher, start_date, end_date], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Live Program added with ID: ${result.insertId}')
+	})
+}
+
+const getAllRegions = (request, response) => {
+	
+	pool.query('SELECT * from region', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const getRegionByParam = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('SELECT * FROM region WHERE region_name = $1 OR region_description = $1 OR region_id = $2', [query, id], (error,results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const createRegion = (request, response) => {
+	const { region_name, region_description } = request.body
+	
+	pool.query('INSERT INTO region (region_name, region_description) VALUES ($1, $2)', [region_name, region_description], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(201).send('Region added with ID: ${result.insertId}')
+	})
+}
+
+const updateRegion = (request, response) => {
+	const { region_name, region_description } = request.body
+	const id = parseInt(request.params.query)
+	
+	pool.query(
+		'UPDATE region SET region_name = $1, region_description = $2 WHERE region_id = $3',
+		[region_name, region_description, id],
+		(error, results) => {
+			if (error)
+			{
+				throw error
+			}
+			response.status(200).send('Region modified with ID: ${id}')
+		}
+		)
+}
+
+const deleteRegion = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('DELETE FROM region WHERE region_name = $1 OR region_description = $1 OR region_id = $2', 
+	[query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).send('Region deleted with ID: ${id}')
+	})
+}
+	
+
 module.exports = {
 	getTeachers,
 	getTeacherByParameter,
@@ -408,4 +487,10 @@ module.exports = {
 	createUnavailability,
 	updateUnavailability,
 	deleteUnavailability,
+	createLiveProgram,
+	getAllRegions,
+	createRegion,
+	getRegionByParam,
+	updateRegion,
+	deleteRegion,
 }

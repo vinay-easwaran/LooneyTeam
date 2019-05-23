@@ -378,17 +378,6 @@ const updateProgramTemplate = (request, response) => {
 		)
 }
 
-const createLiveProgram = (request, response) => {
-	const { region_id, program_template_id, main_location, primary_teacher, start_date, end_date } = request.body
-	
-	pool.query('INSERT INTO program_live (region_id, program_template_id, main_location, primary_teacher, start_date, end_date) VALUES ($1, $2, $3, $4, $5, $6)', [region_id, program_template_id, main_location, primary_teacher, start_date, end_date], (error, results) => {
-		if (error) {
-			throw error
-		}
-		response.status(201).send('Live Program added with ID: ${result.insertId}')
-	})
-}
-
 const getAllRegions = (request, response) => {
 	
 	pool.query('SELECT * from region', (error, results) => {
@@ -455,6 +444,72 @@ const deleteRegion = (request, response) => {
 		response.status(200).send('Region deleted with ID: ${id}')
 	})
 }
+
+const getAllLivePrograms = (request, response) => {
+	
+	pool.query('SELECT * FROM program_live', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const getLiveProgramByParameter = (request, response) -> {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('SELECT * FROM program_live WHERE main_location = $1 OR start_date = $1 OR end_date = $1 OR program_live_id = $2', [query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const createLiveProgram = (request, response) => {
+	const { region_id, program_template_id, main_location, primary_teacher, start_date, end_date } = request.body
+	
+	pool.query('INSERT INTO program_live (region_id, program_template_id, main_location, primary_teacher, start_date, end_date) VALUES ($1, $2, $3, $4, $5, $6)', [region_id, program_template_id, main_location, primary_teacher, start_date, end_date], (error, results) => {
+		if (error) {
+			throw error
+		}
+		response.status(201).send('Live Program added with ID: ${id}')
+	})
+}
+
+const updateLiveProgram = (request, response) => {
+	const { region_id, program_template_id, main_location, primary_teacher, start_date, end_date } = request.body
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('UPDATE program_live SET region_id = $1, program_template_id = $2, main_location = $3, primary_teacher = $4, start_date = $5, end_date = $6 WHERE main_location = $7 OR start_date = $7 OR end_date = $7 OR program_live_id = $8',
+	[region_id, program_template_id, main_location, primary_teacher, start_date, end_date, query, id],
+	(error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).send('Live Program updated with ID: ${id}')
+	})
+}
+
+const deleteLiveProgram = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	poo.query('DELETE FROM program_live WHERE main_location = $1 OR start_date = $1 OR end_date = $1 OR program_live_id = $2', [query, id],
+	(error, results) => {
+		if (err0r)
+		{
+			throw error
+		}
+		response.status(200).send('Live program deleted with ID: ${id}')
+	})
+}
+
 	
 
 module.exports = {
@@ -487,10 +542,14 @@ module.exports = {
 	createUnavailability,
 	updateUnavailability,
 	deleteUnavailability,
-	createLiveProgram,
 	getAllRegions,
 	createRegion,
 	getRegionByParam,
 	updateRegion,
 	deleteRegion,
+	getAllLivePrograms,
+	getLiveProgramByParameter,
+	createLiveProgram,
+	updateLiveProgram,
+	deleteLiveProgram,
 }

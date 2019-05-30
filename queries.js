@@ -295,6 +295,31 @@ const approveTeacher = (request, response) => {
 	})
 }
 
+const getProgramTemplate = (request, response) => {
+	
+	pool.query('SELECT * FROM program_template ORDER BY program_template_id', (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
+const getProgramTemplateByParam = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('SELECT * FROM program_template WHERE program_title = $1 OR program_description = $1 OR program_template_id = $2 OR program_category_id = $2',
+	[query, id], (error, results) => {
+		if (error)
+		{
+			throw error
+		}
+		response.status(200).json(results.rows)
+	})
+}
+
 const createProgramTemplate = (request, response) => {
 	const { program_template_id, program_title, program_description, program_category_id, skills } = request.body
 	console.log(request.body)
@@ -307,16 +332,36 @@ const createProgramTemplate = (request, response) => {
 	})
 }
 
-const getProgramTemplate = (request, response) => {
+const updateProgramTemplate = (request, response) => {
+	const { program_title, program_description } = request.body
+	const id = parseInt(request.params.program_template_id)
 	
-	pool.query('SELECT * FROM program_template ORDER BY program_template_id', (error, results) => {
+	pool.query(
+		'UPDATE program_template SET program_title = $2, program_description = $3 WHERE program_template_id = $1',
+		[id, program_title, program_description],
+		(error, results) => {
+			if (error)
+			{
+				throw error
+			}
+			response.status(200).send('Program Template modified with ID: ${id}')
+		})
+}
+
+const deleteProgramTemplate = (request, response) => {
+	const query = request.params.query
+	const id = parseInt(request.params.query)
+	
+	pool.query('DELETE FROM program_template WHERE program_title = $1 OR program_description = $1 OR program_template_id = $2 OR program_category_id = $2',
+	[query, id], (error, results) => {
 		if (error)
 		{
 			throw error
 		}
-		response.status(200).json(results.rows)
+		response.status(200).send('Program Template deleted with ID: ${id}')
 	})
 }
+
 const createUnavailability = (request, response) => {
 	const { monday, tuesday, wednesday, thursday, friday } = request.body
 	
@@ -358,24 +403,6 @@ const deleteUnavailability = (request, response) => {
 		}
 		response.status(200).send('Teacher deleted with ID: ${id}')
 	})
-}
-
-
-const updateProgramTemplate = (request, response) => {
-	const { program_title, program_description } = request.body
-	const id = parseInt(request.params.program_template_id)
-	
-	pool.query(
-		'UPDATE program_template SET program_title = $2, program_description = $3 WHERE program_template_id = $1',
-		[id, program_title, program_description],
-		(error, results) => {
-			if (error)
-			{
-				throw error
-			}
-			response.status(200).send('Program Template modified with ID: ${id}')
-		}
-		)
 }
 
 const getAllRegions = (request, response) => {
@@ -456,7 +483,7 @@ const getAllLivePrograms = (request, response) => {
 	})
 }
 
-const getLiveProgramByParameter = (request, response) -> {
+const getLiveProgramByParameter = (request, response) => {
 	const query = request.params.query
 	const id = parseInt(request.params.query)
 	
@@ -535,7 +562,9 @@ module.exports = {
 	approveTeacher,
 	createProgramTemplate,
 	getProgramTemplate,
+	getProgramTemplateByParam,
 	updateProgramTemplate,
+	deleteProgramTemplate,
 	deleteClassTemplate,
 	getAllUnavailability,
 	getUnavailability,

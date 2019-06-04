@@ -36,7 +36,7 @@ const createTeacher = (request, response) => {
 		if (error) {
 			throw error
 		}
-		response.status(200).send('Teacher added with ID: ${result.insertId}')
+		response.status(201).send('Teacher added with ID: ${result.insertId}')
 	})
 }
 
@@ -59,10 +59,10 @@ const updateTeacher = (request, response) => {
 }
 
 const deleteTeacher = (request, response) => {
-	const query = request.params.query
-	const bool = (request.params.query == "true")
+	const username = request.params.query
+	const id = parseInt(request.params.query)
 	
-	pool.query('DELETE FROM teachers WHERE username = $1 OR first_name = $1 OR last_name = $1 OR email = $1 OR verified = $2', [query, bool], (error, results) => {
+	pool.query('DELETE FROM teachers WHERE username = $1 OR teacher_id = $2', [username, id], (error, results) => {
 		if (error)
 		{
 			throw error

@@ -19,7 +19,7 @@ app.use(
 )
 
 app.get('/', (request, response) => {
-	response.json({ info: 'Node.js, Express, and Postgres API' })
+	response.json({ info: 'LooneyTeam Backend API made with Node.js, Express, and Postgres' })
 })
 
 app.get('/teachers',db.getTeachers)

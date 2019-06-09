@@ -214,9 +214,9 @@ const updateClassTemplate = (request, response) => {
 }
 
 const createProgramCategory = (request, response) => {
-	const { program_category_id, program_category_name } = request.body
+	const { program_category_name } = request.body
 	
-	pool.query('INSERT INTO program_category (program_category_id, program_category_name) VALUES ($1, $2)', [program_category_id, program_category_name], (error, results) => {
+	pool.query('INSERT INTO program_category (program_category_name) VALUES ($1)', [program_category_name], (error, results) => {
 		if (error) {
 			throw error
 		}

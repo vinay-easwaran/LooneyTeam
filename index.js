@@ -11,7 +11,14 @@ app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin","*");
 	res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
 	res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-	next();
+	
+	if ('OPTIONS' == req.method) {
+		res.send(200);
+	}
+	else {
+		next();
+	}
+	// next();
 });
 
 app.use(bodyParser.json())
@@ -25,7 +32,12 @@ app.get('/', (request, response) => {
 	response.json({ info: 'LooneyTeam Backend API made with Node.js, Express, and Postgres' })
 })
 
-// app.options('/teachers', db.createTeacher)
+app.options('/*', function(req, res, next){
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Acess-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+	res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+	res.send(200);
+});
 
 app.get('/teachers',db.getTeachers)
 app.get('/teachers/:query',db.getTeacherByParameter)

@@ -25,7 +25,7 @@ app.get('/', (request, response) => {
 	response.json({ info: 'LooneyTeam Backend API made with Node.js, Express, and Postgres' })
 })
 
-app.options('/teachers', db.createTeacher)
+// app.options('/teachers', db.createTeacher)
 
 app.get('/teachers',db.getTeachers)
 app.get('/teachers/:query',db.getTeacherByParameter)

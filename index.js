@@ -3,13 +3,19 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = process.env.PORT || 3000
 const db = require('./queries')
+var cors = require('cors')
+// var clientController = require('../components/clients/controller')
+
 
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin","*");
 	res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
 	res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+
 	next();
-});
+}); 
+
+app.use(cors())
 
 app.use(bodyParser.json())
 app.use(
@@ -21,6 +27,8 @@ app.use(
 app.get('/', (request, response) => {
 	response.json({ info: 'LooneyTeam Backend API made with Node.js, Express, and Postgres' })
 })
+
+app.options('/*', function() { return; })
 
 app.get('/teachers',db.getTeachers)
 app.get('/teachers/:query',db.getTeacherByParameter)

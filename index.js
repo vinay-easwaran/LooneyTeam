@@ -38,7 +38,7 @@ app.options('/*', function() { return; })
 
 app.get('/teachers',db.getTeachers)
 app.get('/teachers/:query',db.getTeacherByParameter)
-app.post('/teachers', db.createTeacher)
+app.post('/addteacher', db.createTeacher)
 app.put('/teachers/:query', db.updateTeacher)
 app.delete('/teachers/:query', db.deleteTeacher)
 app.get('/classes', db.getClasses)
